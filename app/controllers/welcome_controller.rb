@@ -8,6 +8,8 @@ protect_from_forgery with: :null_session
       config.channel_token = ENV['line_channel_token']
     }
 
+    reply_token = params['events'][0]['replyToken']
+
     response_message = {
       type: "text",
       text: params["events"].first["message"]["text"]
