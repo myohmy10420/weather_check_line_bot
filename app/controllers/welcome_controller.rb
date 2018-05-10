@@ -8,12 +8,10 @@ protect_from_forgery with: :null_session
       config.channel_token = ENV['line_channel_token']
     }
 
-    reply_token = params['events'][0]['replyToken']
+    service = LineBotResponseService.new(params)
 
-    response_message = {
-      type: "text",
-      text: params["events"].first["message"]["text"]
-    }
+    reply_token = service.reply_token
+    response_message = service.response!
 
     client.reply_message(reply_token, response_message)
     head :ok
