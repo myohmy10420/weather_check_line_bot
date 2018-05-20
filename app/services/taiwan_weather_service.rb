@@ -1,24 +1,26 @@
 # Weather API https://works.ioa.tw/weather/api/doc/index.html#api-Weather_API
 class TaiwanWeatherService
-  # attr_reader :first_key_word
 
   def initialize(key_words)
     @key_word = key_words[0]
   end
 
   def check_town_weather!
-    @town = get_town_id!
-    weather = get_town_weather!
-    "[今日氣象] #{weather["desc"]}
-     [當前溫度] #{weather["temperature"]}
-     [體感溫度] #{weather["felt_air_temp"]}
-     [當前濕度] #{weather["humidity"]}
+    @town = get_town_infos!
 
-     [更新時間] #{weather["at"]}
-    "
+    weather_infos = get_town_weather!
+"[今日氣象] #{weather_infos["desc"]}
+[當前溫度] #{weather_infos["temperature"]}
+[體感溫度] #{weather_infos["felt_air_temp"]}
+[當前濕度] #{weather_infos["humidity"]}
+
+[更新時間] #{weather_infos["at"]}
+"
   end
 
-  def get_town_id!
+  private
+
+  def get_town_infos!
 
     url = 'https://works.ioa.tw/weather/api/all.json'
     uri = URI(url)
@@ -27,13 +29,9 @@ class TaiwanWeatherService
 
     town_infos = nil
 
-    citys.each do |city|
-      city["towns"].each do |town|
-        if town["name"] == @key_word
-          town_infos = town
-        end
-      end
-    end
+    town_infos = citys.find { |city|
+      city["towns"].find { |town| town["name"] == @key_word }
+    }
 
     town_infos || "Not find"
   end
